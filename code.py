@@ -122,13 +122,23 @@ if st.session_state.current < len(questions):
     st.subheader(f"Q{st.session_state.current + 1}: {q['q']}")
     choice = st.radio("How true is this for you?", scale, key=f"q{st.session_state.current}")
 
-    if st.button("Next"):
-        weight = weights[scale.index(choice)]
-        if weight != 0:
-            st.session_state.scores[q["dir"]] += weight
-        st.session_state.current += 1
-        st.session_state.emotion = random.choice(["excited", "surprised", "cheer", "wave"])
-        st.rerun()
+    col1, col2 = st.columns([1, 1])
+
+    with col1:
+        if st.button("⬅️ Back"):
+            if st.session_state.current > 0:
+                st.session_state.current -= 1
+                st.session_state.emotion = "idle"
+                st.rerun()
+
+    with col2:
+        if st.button("Next ➡️"):
+            weight = weights[scale.index(choice)]
+            if weight != 0:
+                st.session_state.scores[q["dir"]] += weight
+            st.session_state.current += 1
+            st.session_state.emotion = random.choice(["excited", "surprised", "cheer", "wave"])
+            st.rerun()
 else:
     def winner(a, b):
         return a if st.session_state.scores[a] >= st.session_state.scores[b] else b
